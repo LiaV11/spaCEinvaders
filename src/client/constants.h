@@ -1,0 +1,22 @@
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
+#define WINDOW_WIDTH 900
+#define WINDOW_HEIGHT 700
+
+#define PLAYER_SPEED 6
+
+#define BULLET_SPEED 14
+
+#define ALIEN_ROWS 5
+#define ALIEN_COLS 8
+
+#define MAX_ALIENS (ALIEN_ROWS * ALIEN_COLS)
+
+#define MAX_ENEMY_BULLETS 3
+
+#define SERVER_IP "127.0.0.1"
+
+#define SERVER_PORT 5000
+
+#endif
