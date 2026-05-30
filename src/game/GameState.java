@@ -9,14 +9,12 @@ public class GameState {
     private Player player;
     private ArrayList<Alien> aliens;
     private ArrayList<Bunker> bunkers;
-
     private int speed;
 
     public GameState() {
         player = new Player();
         aliens = new ArrayList<>();
         bunkers = new ArrayList<>();
-
         speed = 1;
 
         createAliens();
@@ -27,14 +25,20 @@ public class GameState {
 
         aliens.clear();
 
-        aliens.add(
-                AlienFactory.createSquid());
+        // 8 Squids
+        for (int i = 0; i < 8; i++) {
+            aliens.add(AlienFactory.createSquid());
+        }
 
-        aliens.add(
-                AlienFactory.createCrab());
+        // 16 Crabs
+        for (int i = 0; i < 16; i++) {
+            aliens.add(AlienFactory.createCrab());
+        }
 
-        aliens.add(
-                AlienFactory.createOctopus());
+        // 16 Octopus
+        for (int i = 0; i < 16; i++) {
+            aliens.add(AlienFactory.createOctopus());
+        }
     }
 
     private void createBunkers() {
@@ -46,41 +50,80 @@ public class GameState {
         }
     }
 
-    public void alienKilled() {
+    public synchronized void alienKilled(int points) {
 
-        player.addScore(10);
+        player.addScore(points);
+
+        for (Alien alien : aliens) {
+
+            if (alien.isAlive()) {
+                alien.destroy();
+                break;
+            }
+        }
 
         if (allAliensDead()) {
             nextRound();
         }
     }
 
-    public void playerHit() {
+    public synchronized void playerHit() {
         player.loseLife();
     }
 
     private boolean allAliensDead() {
+
         for (Alien alien : aliens) {
+
             if (alien.isAlive()) {
                 return false;
             }
         }
+
         return true;
     }
 
-    private void nextRound() {
+    public synchronized void nextRoundServer() {
+
         speed++;
+
         createAliens();
 
         System.out.println(
-                "Nueva ronda iniciada.");
+            "Nueva ronda iniciada."
+        );
+    }
+
+    private void nextRound() {
+
+        speed++;
+
+        createAliens();
+
+        System.out.println(
+            "Nueva ronda iniciada."
+        );
     }
 
     public int generateUfoPoints() {
+
         Random random = new Random();
 
-        return 500 +
-                random.nextInt(1001);
+        return 500 + random.nextInt(1501);
+    }
+
+    public int getAliensAlive() {
+
+        int count = 0;
+
+        for (Alien alien : aliens) {
+
+            if (alien.isAlive()) {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     public int getSpeed() {
