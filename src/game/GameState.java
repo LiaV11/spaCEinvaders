@@ -7,17 +7,25 @@ import src.patterns.AlienFactory;
 public class GameState {
 
     private Player player;
+
     private ArrayList<Alien> aliens;
+
     private ArrayList<Bunker> bunkers;
+
     private int speed;
 
     public GameState() {
+
         player = new Player();
+
         aliens = new ArrayList<>();
+
         bunkers = new ArrayList<>();
+
         speed = 1;
 
         createAliens();
+
         createBunkers();
     }
 
@@ -25,19 +33,43 @@ public class GameState {
 
         aliens.clear();
 
-        // 8 Squids
-        for (int i = 0; i < 8; i++) {
-            aliens.add(AlienFactory.createSquid());
+        /*
+        8 Squids
+        */
+
+        for (int i = 0;
+             i < 8;
+             i++) {
+
+            aliens.add(
+                AlienFactory.createSquid()
+            );
         }
 
-        // 16 Crabs
-        for (int i = 0; i < 16; i++) {
-            aliens.add(AlienFactory.createCrab());
+        /*
+        16 Crabs
+        */
+
+        for (int i = 0;
+             i < 16;
+             i++) {
+
+            aliens.add(
+                AlienFactory.createCrab()
+            );
         }
 
-        // 16 Octopus
-        for (int i = 0; i < 16; i++) {
-            aliens.add(AlienFactory.createOctopus());
+        /*
+        16 Octopus
+        */
+
+        for (int i = 0;
+             i < 16;
+             i++) {
+
+            aliens.add(
+                AlienFactory.createOctopus()
+            );
         }
     }
 
@@ -45,29 +77,64 @@ public class GameState {
 
         bunkers.clear();
 
-        for (int i = 0; i < 4; i++) {
-            bunkers.add(new Bunker());
+        for (int i = 0;
+             i < 4;
+             i++) {
+
+            bunkers.add(
+                new Bunker()
+            );
         }
     }
 
-    public synchronized void alienKilled(int points) {
+    /*
+    NUEVO METODO
+    */
+
+    public synchronized void alienKilled(
+        int alienId,
+        int points
+    ) {
 
         player.addScore(points);
 
-        for (Alien alien : aliens) {
+        /*
+        UFO
+        */
+
+        if (alienId == -1) {
+
+            return;
+        }
+
+        /*
+        VALIDAR ID
+        */
+
+        if (alienId >= 0 &&
+            alienId < aliens.size()) {
+
+            Alien alien =
+                aliens.get(alienId);
 
             if (alien.isAlive()) {
+
                 alien.destroy();
-                break;
             }
         }
 
+        /*
+        NEXT ROUND
+        */
+
         if (allAliensDead()) {
+
             nextRound();
         }
     }
 
     public synchronized void playerHit() {
+
         player.loseLife();
     }
 
@@ -76,6 +143,7 @@ public class GameState {
         for (Alien alien : aliens) {
 
             if (alien.isAlive()) {
+
                 return false;
             }
         }
@@ -119,6 +187,7 @@ public class GameState {
         for (Alien alien : aliens) {
 
             if (alien.isAlive()) {
+
                 count++;
             }
         }
@@ -127,14 +196,17 @@ public class GameState {
     }
 
     public int getSpeed() {
+
         return speed;
     }
 
     public int getPlayerLives() {
+
         return player.getLives();
     }
 
     public int getPlayerScore() {
+
         return player.getScore();
     }
 }

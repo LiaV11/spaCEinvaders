@@ -165,3 +165,18 @@ void loadTextures(SDL_Renderer* renderer) {
 
     SDL_FreeSurface(ufoSurface);
 }
+
+void destroyTextures() {
+
+    SDL_DestroyTexture(playerTexture);
+
+    SDL_DestroyTexture(alienTexture1);
+    SDL_DestroyTexture(alienTexture2);
+    SDL_DestroyTexture(alienTexture3);
+
+    SDL_DestroyTexture(explosionTexture);
+
+    SDL_DestroyTexture(bunkerTexture);
+
+    SDL_DestroyTexture(ufoTexture);
+}

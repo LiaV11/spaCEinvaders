@@ -7,4 +7,6 @@ void playShootSound();
 
 void playExplosionSound();
 
+void closeAudio();
+
 #endif

@@ -37,3 +37,8 @@ void playExplosionSound() {
         explosionSound,
         0);
 }
+
+void closeAudio() {
+
+    Mix_CloseAudio();
+}

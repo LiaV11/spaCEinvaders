@@ -16,5 +16,6 @@ extern SDL_Texture* bunkerTexture;
 extern SDL_Texture* ufoTexture;
 
 void loadTextures(SDL_Renderer* renderer);
+void destroyTextures();
 
 #endif

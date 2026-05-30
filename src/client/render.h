@@ -18,6 +18,7 @@ void renderGame(
     Alien aliens[],
     int alienCount,
     Bunker bunkers[],
-    UFO* ufo);
+    UFO* ufo
+);
 
 #endif

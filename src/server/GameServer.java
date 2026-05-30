@@ -1,12 +1,16 @@
 package src.server;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.io.IOException;
+import java.util.ArrayList;
 
 public class GameServer {
 
     private int port;
+
+    public static ArrayList<ClientHandler> clients =
+        new ArrayList<>();
 
     public GameServer(int port) {
 
@@ -38,9 +42,9 @@ public class GameServer {
                 );
 
                 ClientHandler handler =
-                    new ClientHandler(
-                        client
-                    );
+                    new ClientHandler(client);
+
+                clients.add(handler);
 
                 Thread thread =
                     new Thread(handler);
@@ -56,9 +60,8 @@ public class GameServer {
 
             try {
 
-                if (
-                    serverSocket != null
-                ) {
+                if (serverSocket != null) {
+
                     serverSocket.close();
                 }
 

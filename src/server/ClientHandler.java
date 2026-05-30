@@ -1,7 +1,7 @@
 package src.server;
 
-import java.net.Socket;
 import java.io.*;
+import java.net.Socket;
 
 import src.game.GameState;
 
@@ -46,6 +46,20 @@ public class ClientHandler implements Runnable {
         out.println("SPEED 1");
     }
 
+    public void sendMessage(String message) {
+
+        out.println(message);
+    }
+
+    private void broadcast(String message) {
+
+        for (ClientHandler client
+             : GameServer.clients) {
+
+            client.sendMessage(message);
+        }
+    }
+
     @Override
     public void run() {
 
@@ -74,6 +88,7 @@ public class ClientHandler implements Runnable {
             try {
 
                 if (socket != null) {
+
                     socket.close();
                 }
 
@@ -88,9 +103,14 @@ public class ClientHandler implements Runnable {
         String message
     ) {
 
+        /*
+        ALIEN KILLED
+        */
+
         if (message.startsWith(
             "ALIEN_KILLED")) {
 
+            int alienId = 0;
             int points = 10;
 
             try {
@@ -98,33 +118,46 @@ public class ClientHandler implements Runnable {
                 String[] parts =
                     message.split(" ");
 
-                if (parts.length > 1) {
+                alienId =
+                    Integer.parseInt(
+                        parts[1]
+                    );
 
-                    points =
-                        Integer.parseInt(
-                            parts[1]
-                        );
-                }
+                points =
+                    Integer.parseInt(
+                        parts[2]
+                    );
 
             } catch (Exception e) {
 
+                alienId = 0;
                 points = 10;
             }
 
             gameState.alienKilled(
+                alienId,
                 points
             );
 
-            out.println(
+            broadcast(
+                "ALIEN_DIED "
+                + alienId
+            );
+
+            broadcast(
                 "UPDATE_SCORE "
                 + gameState.getPlayerScore()
             );
 
-            out.println(
+            broadcast(
                 "SPEED "
                 + gameState.getSpeed()
             );
         }
+
+        /*
+        PLAYER HIT
+        */
 
         else if (
             message.equals(
@@ -134,11 +167,15 @@ public class ClientHandler implements Runnable {
 
             gameState.playerHit();
 
-            out.println(
+            broadcast(
                 "UPDATE_LIVES "
                 + gameState.getPlayerLives()
             );
         }
+
+        /*
+        NEXT ROUND
+        */
 
         else if (
             message.equals(
@@ -148,11 +185,15 @@ public class ClientHandler implements Runnable {
 
             gameState.nextRoundServer();
 
-            out.println(
+            broadcast(
                 "SPEED "
                 + gameState.getSpeed()
             );
         }
+
+        /*
+        PLAYER LOSE
+        */
 
         else if (
             message.equals(
@@ -165,16 +206,49 @@ public class ClientHandler implements Runnable {
             );
         }
 
+        /*
+        UFO
+        */
+
         else if (
             message.equals(
                 "REQUEST_UFO"
             )
         ) {
 
-            out.println(
+            int points =
+                gameState.generateUfoPoints();
+
+            broadcast(
                 "CREATE_UFO LEFT_RIGHT "
-                + gameState.generateUfoPoints()
+                + points
             );
+        }
+
+        /*
+        PLAYER POSITION
+        */
+
+        else if (
+            message.startsWith(
+                "PLAYER_POS"
+            )
+        ) {
+
+            broadcast(message);
+        }
+
+        /*
+        BULLETS
+        */
+
+        else if (
+            message.startsWith(
+                "BULLET"
+            )
+        ) {
+
+            broadcast(message);
         }
     }
 }

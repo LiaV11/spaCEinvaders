@@ -9,18 +9,12 @@ void drawStars(SDL_Renderer* renderer) {
         renderer,
         255,255,255,255);
 
-    for (int i = 0;
-         i < 120;
-         i++) {
+    for (int i = 0; i < 120; i++) {
 
         int x = (i * 73) % 900;
-
         int y = (i * 97) % 700;
 
-        SDL_RenderDrawPoint(
-            renderer,
-            x,
-            y);
+        SDL_RenderDrawPoint(renderer, x, y);
     }
 }
 
@@ -34,10 +28,6 @@ void renderGame(
     Bunker bunkers[],
     UFO* ufo) {
 
-    /*
-    BACKGROUND
-    */
-
     SDL_SetRenderDrawColor(
         renderer,
         5,5,25,255);
@@ -46,15 +36,9 @@ void renderGame(
 
     drawStars(renderer);
 
-    /*
-    FLOOR
-    */
-
     SDL_Rect floor = {
-
         0,
         660,
-
         900,
         40
     };
@@ -66,10 +50,6 @@ void renderGame(
     SDL_RenderFillRect(
         renderer,
         &floor);
-
-    /*
-    PLAYER
-    */
 
     SDL_Rect playerRect = {
 
@@ -84,11 +64,8 @@ void renderGame(
         renderer,
         playerTexture,
         NULL,
-        &playerRect);
-
-    /*
-    PLAYER BULLET
-    */
+        &playerRect
+    );
 
     if (bullet->active) {
 
@@ -110,13 +87,9 @@ void renderGame(
             &bulletRect);
     }
 
-    /*
-    ENEMY BULLETS
-    */
-
     for (int i = 0;
-         i < MAX_ENEMY_BULLETS;
-         i++) {
+        i < MAX_ENEMY_BULLETS;
+        i++) {
 
         if (enemyBullets[i].active) {
 
@@ -139,84 +112,32 @@ void renderGame(
         }
     }
 
-    /*
-    ALIENS
-    */
-
     for (int i = 0;
-         i < alienCount;
-         i++) {
-
-        SDL_Rect alienRect = {
-
-            aliens[i].x,
-            aliens[i].y,
-
-            aliens[i].width,
-            aliens[i].height
-        };
-
-        /*
-        NORMAL ALIENS
-        */
-
-        if (aliens[i].alive &&
-            !aliens[i].exploding) {
-
-            if (aliens[i].type == 0) {
-
-                SDL_RenderCopy(
-                    renderer,
-                    alienTexture1,
-                    NULL,
-                    &alienRect);
-            }
-
-            else if (aliens[i].type == 1) {
-
-                SDL_RenderCopy(
-                    renderer,
-                    alienTexture2,
-                    NULL,
-                    &alienRect);
-            }
-
-            else {
-
-                SDL_RenderCopy(
-                    renderer,
-                    alienTexture3,
-                    NULL,
-                    &alienRect);
-            }
-        }
-
-        /*
-        EXPLOSIONS
-        */
-
-        if (aliens[i].exploding) {
-
-            SDL_RenderCopy(
-                renderer,
-                explosionTexture,
-                NULL,
-                &alienRect);
-        }
-    }
-
-    /*
-    BUNKERS
-    */
-
-    for (int i = 0;
-         i < 4;
-         i++) {
+        i < 4;
+        i++) {
 
         if (bunkers[i].health <= 0) {
-
             continue;
         }
+
+        int alpha = 255;
+
+        if (bunkers[i].health <= 75) {
+            alpha = 200;
+        }
+
+        if (bunkers[i].health <= 50) {
+            alpha = 140;
+        }
+
+        if (bunkers[i].health <= 25) {
+            alpha = 80;
+        }
+
+        SDL_SetTextureAlphaMod(
+            bunkerTexture,
+            alpha
+        );
 
         SDL_Rect bunkerRect = {
 
@@ -227,41 +148,63 @@ void renderGame(
             bunkers[i].height
         };
 
-        /*
-        BUNKER DAMAGE EFFECT
-        */
-
-        if (bunkers[i].health > 60) {
-
-            SDL_SetTextureAlphaMod(
-                bunkerTexture,
-                255);
-        }
-
-        else if (bunkers[i].health > 30) {
-
-            SDL_SetTextureAlphaMod(
-                bunkerTexture,
-                180);
-        }
-
-        else {
-
-            SDL_SetTextureAlphaMod(
-                bunkerTexture,
-                100);
-        }
-
         SDL_RenderCopy(
             renderer,
             bunkerTexture,
             NULL,
-            &bunkerRect);
+            &bunkerRect
+        );
     }
 
-    /*
-    UFO
-    */
+    SDL_SetTextureAlphaMod(
+        bunkerTexture,
+        255
+    );
+
+    for (int i = 0;
+         i < alienCount;
+         i++) {
+
+        if (!aliens[i].alive) {
+            continue;
+        }
+
+        SDL_Rect alienRect = {
+
+            aliens[i].x,
+            aliens[i].y,
+
+            aliens[i].width,
+            aliens[i].height
+        };
+
+        if (aliens[i].type == 0) {
+
+            SDL_RenderCopy(
+                renderer,
+                alienTexture1,
+                NULL,
+                &alienRect);
+        }
+
+        else if (aliens[i].type == 1) {
+
+            SDL_RenderCopy(
+                renderer,
+                alienTexture2,
+                NULL,
+                &alienRect);
+        }
+
+        else {
+
+            SDL_RenderCopy(
+                renderer,
+                alienTexture3,
+                NULL,
+                &alienRect);
+        }
+    }
 
     if (ufo->active) {
 
@@ -280,10 +223,6 @@ void renderGame(
             NULL,
             &ufoRect);
     }
-
-    /*
-    HUD
-    */
 
     renderHUD(
         renderer,
