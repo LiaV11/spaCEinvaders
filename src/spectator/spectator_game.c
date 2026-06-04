@@ -80,7 +80,10 @@ void runSpectator() {
             &player,
             &alienSpeed,
             &ufo,
-            aliens
+            aliens,
+            &bullet,
+            enemyBullets,
+            bunkers
         );
 
         while (SDL_PollEvent(&event)) {

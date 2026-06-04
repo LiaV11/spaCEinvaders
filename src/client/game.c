@@ -206,6 +206,12 @@ void runGame() {
                     bunkers[i].width = 0;
                     bunkers[i].height = 0;
                 }
+
+                char bunkerMsg[64];
+                sprintf(bunkerMsg,
+                        "BULLET_BUNKER %d %d",
+                        i, bunkers[i].health);
+                sendMessage(socketFd, bunkerMsg);
             }
         }
 
@@ -250,6 +256,12 @@ void runGame() {
                         bunkers[j].width = 0;
                         bunkers[j].height = 0;
                     }
+
+                    char bunkerMsg[64];
+                    sprintf(bunkerMsg,
+                            "BULLET_BUNKER %d %d",
+                            j, bunkers[j].health);
+                    sendMessage(socketFd, bunkerMsg);
                 }
             }
         }
@@ -274,6 +286,8 @@ void runGame() {
                     }
 
                     playExplosionSound();
+
+                    sendMessage(socketFd, "PLAYER_HIT");
 
                     if (player.lives <= 0) {
 
@@ -336,6 +350,12 @@ void runGame() {
                 player.score += points;
 
                 playExplosionSound();
+
+                char killMsg[64];
+                sprintf(killMsg,
+                        "ALIEN_KILLED %d %d",
+                        i, points);
+                sendMessage(socketFd, killMsg);
             }
         }
 
@@ -452,6 +472,24 @@ void runGame() {
             else {
                 ufo.points = 500;
             }
+        }
+
+        char bulletMsg[64];
+        sprintf(bulletMsg,
+                "BULLET_PLAYER %d %d %d",
+                bullet.x, bullet.y, bullet.active);
+        sendMessage(socketFd, bulletMsg);
+
+        for (int k = 0; k < MAX_ENEMY_BULLETS; k++) {
+
+            char ebMsg[64];
+            sprintf(ebMsg,
+                    "BULLET_ENEMY %d %d %d %d",
+                    k,
+                    enemyBullets[k].x,
+                    enemyBullets[k].y,
+                    enemyBullets[k].active);
+            sendMessage(socketFd, ebMsg);
         }
 
         renderGame(

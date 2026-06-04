@@ -4,6 +4,9 @@
 #include "player.h"
 #include "ufo.h"
 #include "alien.h"
+#include "bullet.h"
+#include "enemy_bullet.h"
+#include "bunker.h"
 
 int connectToServer();
 
@@ -25,7 +28,10 @@ void receiveMessagesSpectator(
     Player* player,
     int* alienSpeed,
     UFO* ufo,
-    Alien aliens[]
+    Alien aliens[],
+    Bullet* bullet,
+    EnemyBullet enemyBullets[],
+    Bunker bunkers[]
 );
 
 #endif

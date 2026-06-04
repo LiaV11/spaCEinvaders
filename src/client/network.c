@@ -206,7 +206,10 @@ void receiveMessagesSpectator(
     Player* player,
     int* alienSpeed,
     UFO* ufo,
-    Alien aliens[]
+    Alien aliens[],
+    Bullet* bullet,
+    EnemyBullet enemyBullets[],
+    Bunker bunkers[]
 ) {
 
     char buffer[256];
@@ -311,6 +314,48 @@ void receiveMessagesSpectator(
                 &player->x,
                 &player->y
             );
+        }
+
+        else if (strncmp(line, "BULLET_PLAYER", 13) == 0) {
+
+            sscanf(
+                line,
+                "BULLET_PLAYER %d %d %d",
+                &bullet->x,
+                &bullet->y,
+                &bullet->active
+            );
+        }
+
+        else if (strncmp(line, "BULLET_ENEMY", 12) == 0) {
+
+            int idx;
+
+            sscanf(
+                line,
+                "BULLET_ENEMY %d %d %d %d",
+                &idx,
+                &enemyBullets[idx].x,
+                &enemyBullets[idx].y,
+                &enemyBullets[idx].active
+            );
+        }
+
+        else if (strncmp(line, "BULLET_BUNKER", 13) == 0) {
+
+            int bunkerId;
+            int health;
+
+            sscanf(
+                line,
+                "BULLET_BUNKER %d %d",
+                &bunkerId,
+                &health
+            );
+
+            if (bunkerId >= 0 && bunkerId < 4) {
+                bunkers[bunkerId].health = health;
+            }
         }
 
         line = strtok(NULL, "\n");
