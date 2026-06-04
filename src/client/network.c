@@ -201,7 +201,7 @@ void receiveMessages(
     }
 }
 
-void receiveMessagesSpectator(
+int receiveMessagesSpectator(
     int socketFd,
     Player* player,
     int* alienSpeed,
@@ -223,8 +223,10 @@ void receiveMessagesSpectator(
         );
 
     if (bytes <= 0) {
-        return;
+        return 0;
     }
+
+    int playerLost = 0;
 
     buffer[bytes] = '\0';
 
@@ -329,16 +331,20 @@ void receiveMessagesSpectator(
 
         else if (strncmp(line, "BULLET_ENEMY", 12) == 0) {
 
-            int idx;
+            int idx, x, y, active;
 
             sscanf(
                 line,
                 "BULLET_ENEMY %d %d %d %d",
-                &idx,
-                &enemyBullets[idx].x,
-                &enemyBullets[idx].y,
-                &enemyBullets[idx].active
+                &idx, &x, &y, &active
             );
+
+            if (idx >= 0 && idx < MAX_ENEMY_BULLETS) {
+
+                enemyBullets[idx].x = x;
+                enemyBullets[idx].y = y;
+                enemyBullets[idx].active = active;
+            }
         }
 
         else if (strncmp(line, "BULLET_BUNKER", 13) == 0) {
@@ -358,6 +364,13 @@ void receiveMessagesSpectator(
             }
         }
 
+        else if (strncmp(line, "PLAYER_LOSE", 11) == 0) {
+
+            playerLost = 1;
+        }
+
         line = strtok(NULL, "\n");
     }
+
+    return playerLost;
 }

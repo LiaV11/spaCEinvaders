@@ -23,7 +23,7 @@ void receiveMessages(
     Alien aliens[]
 );
 
-void receiveMessagesSpectator(
+int receiveMessagesSpectator(
     int socketFd,
     Player* player,
     int* alienSpeed,

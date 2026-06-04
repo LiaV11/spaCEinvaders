@@ -204,6 +204,8 @@ public class ClientHandler implements Runnable {
             System.out.println(
                 "Jugador perdió la partida."
             );
+
+            broadcast("PLAYER_LOSE");
         }
 
         /*

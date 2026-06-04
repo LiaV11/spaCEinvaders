@@ -135,7 +135,9 @@ public class GameState {
 
     public synchronized void playerHit() {
 
-        player.loseLife();
+        if (player.getLives() > 0) {
+            player.loseLife();
+        }
     }
 
     private boolean allAliensDead() {

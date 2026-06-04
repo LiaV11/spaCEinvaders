@@ -75,7 +75,7 @@ void runSpectator() {
 
     while (running) {
 
-        receiveMessagesSpectator(
+        int lost = receiveMessagesSpectator(
             socketFd,
             &player,
             &alienSpeed,
@@ -85,6 +85,18 @@ void runSpectator() {
             enemyBullets,
             bunkers
         );
+
+        if (lost) {
+
+            SDL_ShowSimpleMessageBox(
+                SDL_MESSAGEBOX_ERROR,
+                "GAME OVER",
+                "El jugador perdio todas las vidas",
+                window
+            );
+
+            running = 0;
+        }
 
         while (SDL_PollEvent(&event)) {
 

@@ -291,6 +291,11 @@ void runGame() {
 
                     if (player.lives <= 0) {
 
+                        sendMessage(
+                            socketFd,
+                            "PLAYER_LOSE"
+                        );
+
                         SDL_ShowSimpleMessageBox(
                             SDL_MESSAGEBOX_ERROR,
                             "GAME OVER",
@@ -299,6 +304,7 @@ void runGame() {
                         );
 
                         running = 0;
+                        break;
                     }
                 }
             }
