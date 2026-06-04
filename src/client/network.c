@@ -200,3 +200,119 @@ void receiveMessages(
         line = strtok(NULL, "\n");
     }
 }
+
+void receiveMessagesSpectator(
+    int socketFd,
+    Player* player,
+    int* alienSpeed,
+    UFO* ufo,
+    Alien aliens[]
+) {
+
+    char buffer[256];
+
+    int bytes =
+        recv(
+            socketFd,
+            buffer,
+            sizeof(buffer) - 1,
+            0
+        );
+
+    if (bytes <= 0) {
+        return;
+    }
+
+    buffer[bytes] = '\0';
+
+    char* line =
+        strtok(buffer, "\n");
+
+    while (line != NULL) {
+
+        if (strncmp(line, "UPDATE_SCORE", 12) == 0) {
+
+            sscanf(
+                line,
+                "UPDATE_SCORE %d",
+                &player->score
+            );
+        }
+
+        else if (strncmp(line, "UPDATE_LIVES", 12) == 0) {
+
+            sscanf(
+                line,
+                "UPDATE_LIVES %d",
+                &player->lives
+            );
+        }
+
+        else if (strncmp(line, "SPEED", 5) == 0) {
+
+            sscanf(
+                line,
+                "SPEED %d",
+                alienSpeed
+            );
+        }
+
+        else if (strncmp(line, "ALIEN_DIED", 10) == 0) {
+
+            int alienId;
+
+            sscanf(
+                line,
+                "ALIEN_DIED %d",
+                &alienId
+            );
+
+            if (
+                alienId >= 0 &&
+                alienId < MAX_ALIENS
+            ) {
+                aliens[alienId].alive = 0;
+            }
+        }
+
+        else if (strncmp(line, "CREATE_UFO", 10) == 0) {
+
+            char direction[32];
+            int points;
+
+            sscanf(
+                line,
+                "CREATE_UFO %s %d",
+                direction,
+                &points
+            );
+
+            ufo->active = 1;
+            ufo->points = points;
+
+            if (strcmp(direction, "LEFT_RIGHT") == 0) {
+
+                ufo->direction = 1;
+                ufo->x = -120;
+            }
+
+            else {
+
+                ufo->direction = -1;
+                ufo->x = WINDOW_WIDTH + 120;
+            }
+        }
+
+        else if (strncmp(line, "PLAYER_POS", 10) == 0) {
+
+            sscanf(
+                line,
+                "PLAYER_POS %d %d",
+                &player->x,
+                &player->y
+            );
+        }
+
+        line = strtok(NULL, "\n");
+    }
+}

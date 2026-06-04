@@ -20,4 +20,12 @@ void receiveMessages(
     Alien aliens[]
 );
 
+void receiveMessagesSpectator(
+    int socketFd,
+    Player* player,
+    int* alienSpeed,
+    UFO* ufo,
+    Alien aliens[]
+);
+
 #endif

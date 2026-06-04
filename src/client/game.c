@@ -186,6 +186,11 @@ void runGame() {
             player.x += PLAYER_SPEED;
         }
 
+        char posMsg[64];
+        sprintf(posMsg, "PLAYER_POS %d %d",
+                player.x, player.y);
+        sendMessage(socketFd, posMsg);
+
         updateBullet(&bullet);
 
         for (int i = 0; i < 4; i++) {
