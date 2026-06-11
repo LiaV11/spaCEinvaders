@@ -17,6 +17,7 @@
 #include "enemy_bullet.h"
 #include "network.h"
 #include "ufo.h"
+#include "serial.h"
 
 #include <stdlib.h>
 #include <time.h>
@@ -110,6 +111,12 @@ void runGame() {
     int moveLeft = 0;
     int moveRight = 0;
 
+    HANDLE hSerial = openSerial("\\\\.\\COM3");
+    int    picoLeft    = 0;
+    int    picoRight   = 0;
+    Uint32 lastLeftMs  = 0;
+    Uint32 lastRightMs = 0;
+
     int alienDirection = 1;
     int alienSpeed = 2;
 
@@ -172,15 +179,45 @@ void runGame() {
             }
         }
 
+        char serialBuf[32];
+        int serialBytes = readSerial(hSerial, serialBuf, sizeof(serialBuf));
+        for (int i = 0; i < serialBytes; i++) {
+            if (serialBuf[i] == 'L') {
+                picoLeft    = 1;
+                picoRight   = 0;
+                lastLeftMs  = SDL_GetTicks();
+            }
+            if (serialBuf[i] == 'R') {
+                picoRight   = 1;
+                picoLeft    = 0;
+                lastRightMs = SDL_GetTicks();
+            }
+            if (serialBuf[i] == 'S') {
+                if (!bullet.active && shootCooldown == 0) {
+                    shootBullet(
+                        &bullet,
+                        player.x + player.width / 2 - 4,
+                        player.y - 20
+                    );
+                    shootCooldown = 15;
+                    playShootSound();
+                }
+            }
+        }
+
+        Uint32 nowMs = SDL_GetTicks();
+        if (picoLeft  && nowMs - lastLeftMs  > 200) picoLeft  = 0;
+        if (picoRight && nowMs - lastRightMs > 200) picoRight = 0;
+
         if (shootCooldown > 0) {
             shootCooldown--;
         }
 
-        if (moveLeft && player.x > 0) {
+        if ((moveLeft || picoLeft) && player.x > 0) {
             player.x -= PLAYER_SPEED;
         }
 
-        if (moveRight &&
+        if ((moveRight || picoRight) &&
             player.x + player.width < WINDOW_WIDTH) {
 
             player.x += PLAYER_SPEED;
@@ -528,6 +565,7 @@ void runGame() {
         }
     }
 
+    closeSerial(hSerial);
     closesocket(socketFd);
 
     WSACleanup();
