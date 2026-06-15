@@ -2,7 +2,6 @@ package src.server;
 
 import java.io.*;
 import java.net.Socket;
-
 import src.game.GameState;
 
 public class ClientHandler implements Runnable {
@@ -11,12 +10,12 @@ public class ClientHandler implements Runnable {
     private BufferedReader in;
     private PrintWriter out;
 
-    private static GameState gameState =
-        new GameState();
+    private GameState gameState;
 
     public ClientHandler(Socket socket) {
 
         this.socket = socket;
+        gameState = new GameState();
 
         try {
 
@@ -144,12 +143,12 @@ public class ClientHandler implements Runnable {
                 + alienId
             );
 
-            broadcast(
+            sendMessage(
                 "UPDATE_SCORE "
                 + gameState.getPlayerScore()
             );
 
-            broadcast(
+            sendMessage(
                 "SPEED "
                 + gameState.getSpeed()
             );
@@ -167,7 +166,7 @@ public class ClientHandler implements Runnable {
 
             gameState.playerHit();
 
-            broadcast(
+            sendMessage(
                 "UPDATE_LIVES "
                 + gameState.getPlayerLives()
             );
@@ -205,7 +204,7 @@ public class ClientHandler implements Runnable {
                 "Jugador perdió la partida."
             );
 
-            broadcast("PLAYER_LOSE");
+            sendMessage("PLAYER_LOSE");
         }
 
         /*
@@ -221,7 +220,7 @@ public class ClientHandler implements Runnable {
             int points =
                 gameState.generateUfoPoints();
 
-            broadcast(
+            sendMessage(
                 "CREATE_UFO LEFT_RIGHT "
                 + points
             );
